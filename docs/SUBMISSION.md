@@ -22,7 +22,7 @@ It is built around two real service-desk problems that a generic "password reset
 
 ### How it works
 
-*(Insert `docs/architecture.png`.)*
+![StormDesk architecture](architecture.png)
 
 | Part | What it does | Built with |
 |---|---|---|
@@ -123,7 +123,7 @@ The build went through seven phases. These are the iterations that changed the d
 | Release (all fixes) | 14/15 | 0 | 14 pass, 1 attention | 4.33 (process 4.93) |
 
 What the rounds found:
-- **A hint promised a "transfer" on a line that has none.** That caused the one baseline 🟡. Fixed in every hint.
+- **A hint promised a "transfer" on a line that has none.** That caused the one baseline "attention" verdict. Fixed in every hint.
 - **Nebius timeouts lost two reviews.** Added a backup model.
 - **One of my own rule checks was too broad.** "Confirm … expired password" counted as *asking* for a password. Made precise.
 - **An impostor's pressure moved the call off the Account desk mid-verification.** It went to Security, then to Escalation, where codes couldn't be checked, so the lockout never happened. Fixed: frustration can't move a call out of verification, and every reachable desk can check codes. **3/3 after the fix.**
@@ -154,13 +154,24 @@ What the rounds found:
 
 ---
 
-## Screenshots to include
+## Screenshots
 
-| File | Shows |
-|---|---|
-| `docs/architecture.png` | The architecture |
-| `docs/screenshots/console-approvals.png` | A technician's approval queue with risk signals |
-| `docs/screenshots/console-storm-board.png` | A declared major incident and live status of 17 services |
-| `docs/screenshots/console-phones.png` | The simulated phone with a verification code |
-| `docs/screenshots/console-call-timeline.png` | Every tool the agent used during a call |
-| `docs/screenshots/console-review-detail.png` | A post-call scorecard for the impostor call |
+**The technician's approval queue.** A pending MFA reset and a major-incident proposal, each with its risk signals or evidence.
+
+![Approvals](screenshots/console-approvals.png)
+
+**The storm board.** A declared VPN major incident with its linked reports, and the live status of 17 services.
+
+![Storm board](screenshots/console-storm-board.png)
+
+**An employee's simulated phone.** The verification code the caller reads out, and every message StormDesk sent.
+
+![Phones](screenshots/console-phones.png)
+
+**A call's timeline.** Every tool the agent used, what it sent, and the instruction it got back.
+
+![Call timeline](screenshots/console-call-timeline.png)
+
+**A post-call scorecard.** The review of the impostor call: a pass for the agent, and a flag about the impersonation attempt.
+
+![Review](screenshots/console-review-detail.png)
