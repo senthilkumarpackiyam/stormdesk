@@ -1,9 +1,10 @@
 # StormDesk: an IT service desk voice agent
 
 **The Gen Academy · Week 3 · Build Your AI Agent**
+
 Use case F (multi-agent IT support voice agent) · Code track (LangGraph + LangChain) · ElevenLabs, Nebius Token Factory, LangSmith
 
-**GitHub:** https://github.com/senthilkumarpackiyam/stormdesk · **Demo video:** _link_
+**GitHub:** [github.com/senthilkumarpackiyam/stormdesk](https://github.com/senthilkumarpackiyam/stormdesk) · **Demo video:** _link_
 
 ---
 
@@ -123,6 +124,7 @@ The build went through seven phases. These are the iterations that changed the d
 | Release (all fixes) | 14/15 | 0 | 14 pass, 1 attention | 4.33 (process 4.93) |
 
 What the rounds found:
+
 - **A hint promised a "transfer" on a line that has none.** That caused the one baseline "attention" verdict. Fixed in every hint.
 - **Nebius timeouts lost two reviews.** Added a backup model.
 - **One of my own rule checks was too broad.** "Confirm … expired password" counted as *asking* for a password. Made precise.
