@@ -23,7 +23,7 @@ It is built around two real service-desk problems that a generic "password reset
 
 ### How it works
 
-![StormDesk architecture](architecture.png)
+![StormDesk architecture](architecture-vertical.png)
 
 | Part | What it does | Built with |
 |---|---|---|
@@ -158,22 +158,22 @@ What the rounds found:
 
 ## Screenshots
 
-**The technician's approval queue.** A pending MFA reset and a major-incident proposal, each with its risk signals or evidence.
-
 ![Approvals](screenshots/console-approvals.png)
 
-**The storm board.** A declared VPN major incident with its linked reports, and the live status of 17 services.
+**The technician's approval queue.** A pending MFA reset and a major-incident proposal, each with its risk signals or evidence.
 
 ![Storm board](screenshots/console-storm-board.png)
 
-**An employee's simulated phone.** The verification code the caller reads out, and every message StormDesk sent.
+**The storm board.** A declared VPN major incident with its linked reports, and the live status of 17 services.
 
 ![Phones](screenshots/console-phones.png)
 
-**A call's timeline.** Every tool the agent used, what it sent, and the instruction it got back.
+**An employee's simulated phone.** The verification code the caller reads out, and every message StormDesk sent.
 
 ![Call timeline](screenshots/console-call-timeline.png)
 
-**A post-call scorecard.** The review of the impostor call: a pass for the agent, and a flag about the impersonation attempt.
+**A call's timeline.** Every tool the agent used, what it sent, and the instruction it got back.
 
 ![Review](screenshots/console-review-detail.png)
+
+**A post-call scorecard.** The review of the impostor call: a pass for the agent, and a flag about the impersonation attempt.
