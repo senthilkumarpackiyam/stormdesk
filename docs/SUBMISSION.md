@@ -3,7 +3,7 @@
 **The Gen Academy · Week 3 · Build Your AI Agent**
 Use case F (multi-agent IT support voice agent) · Code track (LangGraph + LangChain) · ElevenLabs, Nebius Token Factory, LangSmith
 
-**GitHub:** _link_ · **Demo video:** _link_
+**GitHub:** https://github.com/senthilkumarpackiyam/stormdesk · **Demo video:** _link_
 
 ---
 

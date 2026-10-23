@@ -4,7 +4,7 @@
 
 Built for The Gen Academy, Week 3 "Build Your AI Agent": use case F (multi-agent IT support voice agent), code track (LangGraph + LangChain), with ElevenLabs, Nebius Token Factory and LangSmith.
 
-> **Demo video:** _link to be added_ · **Project write-up:** _link to be added_
+> **Demo video:** _link to be added_ · **Project write-up:** [docs/SUBMISSION.md](docs/SUBMISSION.md)
 
 ## The one-liner
 
