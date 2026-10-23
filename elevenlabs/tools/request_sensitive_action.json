@@ -1,0 +1,51 @@
+{
+  "type": "webhook",
+  "name": "request_sensitive_action",
+  "description": "Ask a technician to approve an account change. The caller must be verified by one-time code first. Returns an approval_id to pass to check_approval_status.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/request_sensitive_action",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for request_sensitive_action",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "action": {
+          "type": "string",
+          "description": "mfa_reset: move sign-in approvals to a new phone. account_unlock: unlock a locked-out account. access_grant: access to an application or group.",
+          "enum": [
+            "mfa_reset",
+            "account_unlock",
+            "access_grant"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why the caller needs it, in their words."
+        },
+        "resource": {
+          "type": "string",
+          "description": "For access_grant: the application or group needed."
+        },
+        "caller_confirmed": {
+          "type": "boolean",
+          "description": "True only after the caller agreed to the request."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "action",
+        "reason"
+      ]
+    }
+  }
+}

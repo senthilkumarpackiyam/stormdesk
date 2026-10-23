@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "check_approval_status",
+  "description": "Wait up to about 12 seconds for the technician's decision on an approval_id. Call again if it's still pending.",
+  "response_timeout_secs": 25,
+  "tool_call_sound": "typing",
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/check_approval_status",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for check_approval_status",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "approval_id": {
+          "type": "string",
+          "description": "The approval_id returned by request_sensitive_action."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "approval_id"
+      ]
+    }
+  }
+}

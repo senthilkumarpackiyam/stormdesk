@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "check_service_status",
+  "description": "Live status of an app or internal system: is it down for everyone, or just this caller? Call this before troubleshooting any app or network problem.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": "typing",
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/check_service_status",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for check_service_status",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "service": {
+          "type": "string",
+          "description": "The app or system the caller mentioned, e.g. Slack, Zoom, Gmail, VPN, Wi-Fi, GitHub, Jira. Plain words are fine."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "service"
+      ]
+    }
+  }
+}

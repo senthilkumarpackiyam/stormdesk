@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "check_security_advisories",
+  "description": "Whether attackers are actively exploiting a security hole in a product we use (CISA KEV list). Call when a caller describes odd behaviour: unexpected login prompts, certificate warnings, pop-ups, or settings changing by themselves.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": "typing",
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/check_security_advisories",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for check_security_advisories",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "product": {
+          "type": "string",
+          "description": "A product or internal system, e.g. VPN, Ivanti, Fortinet, Zoom."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "product"
+      ]
+    }
+  }
+}

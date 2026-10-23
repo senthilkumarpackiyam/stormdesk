@@ -1,0 +1,42 @@
+{
+  "type": "webhook",
+  "name": "add_ticket_note",
+  "description": "Add an update to one of the caller's own open tickets, and optionally mark it fixed.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/add_ticket_note",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for add_ticket_note",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "number": {
+          "type": "string",
+          "description": "The caller's ticket number, e.g. INC0010001 (digits alone are fine)."
+        },
+        "note": {
+          "type": "string",
+          "description": "What's new: symptoms, steps tried, results."
+        },
+        "mark_resolved": {
+          "type": "boolean",
+          "description": "True only if the caller confirms the problem is now fixed."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "number",
+        "note"
+      ]
+    }
+  }
+}

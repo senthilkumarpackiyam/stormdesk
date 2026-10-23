@@ -1,0 +1,76 @@
+{
+  "type": "webhook",
+  "name": "create_incident",
+  "description": "Log a ticket for the caller. First call it with caller_confirmed=false to get the read-back text; after the caller agrees, call again with caller_confirmed=true. Links to a major incident automatically, and alerts a technician if colleagues report the same thing.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/create_incident",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for create_incident",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "summary": {
+          "type": "string",
+          "description": "One line in plain words, e.g. 'VPN disconnects every few minutes'."
+        },
+        "details": {
+          "type": "string",
+          "description": "What the caller described, what you tried, any error messages."
+        },
+        "service": {
+          "type": "string",
+          "description": "The app or system involved, if any, e.g. VPN, Slack, Gmail."
+        },
+        "impact": {
+          "type": "string",
+          "description": "Who is affected: just the caller, their team, their whole office, or everyone.",
+          "enum": [
+            "just_me",
+            "team",
+            "site",
+            "company"
+          ]
+        },
+        "urgency": {
+          "type": "string",
+          "description": "Can they still work, are they slowed down, or completely blocked?",
+          "enum": [
+            "can_work",
+            "slowed",
+            "blocked"
+          ]
+        },
+        "kb_id": {
+          "type": "string",
+          "description": "The knowledge-base article you followed, if any."
+        },
+        "security_concern": {
+          "type": "boolean",
+          "description": "True for anything security-related: phishing, a clicked link, a password typed into a strange page, unexpected login prompts, certificate warnings, possible compromise."
+        },
+        "resolved_on_call": {
+          "type": "boolean",
+          "description": "True if the problem is already fixed on this call."
+        },
+        "caller_confirmed": {
+          "type": "boolean",
+          "description": "True only after you read the summary back and the caller said yes."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "summary"
+      ]
+    }
+  }
+}

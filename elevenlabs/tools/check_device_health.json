@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "check_device_health",
+  "description": "Whether the caller's laptop operating system still gets security updates. Useful for slowness, crashes, update problems, or before closing any hardware ticket.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": "typing",
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/check_device_health",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for check_device_health",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "employee_id": {
+          "type": "string",
+          "description": "The employee ID returned by lookup_employee."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "employee_id"
+      ]
+    }
+  }
+}

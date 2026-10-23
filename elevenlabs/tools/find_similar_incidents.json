@@ -1,0 +1,41 @@
+{
+  "type": "webhook",
+  "name": "find_similar_incidents",
+  "description": "How many colleagues reported the same system broken in the last few minutes, and whether there's already a major incident. Call after check_service_status for any app or network issue.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/find_similar_incidents",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for find_similar_incidents",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "service": {
+          "type": "string",
+          "description": "The app or system that's broken, e.g. VPN, Slack, Wi-Fi."
+        },
+        "location": {
+          "type": "string",
+          "description": "The caller's office (from lookup_employee), if known."
+        },
+        "employee_id": {
+          "type": "string",
+          "description": "The caller's ID, so their own tickets aren't counted."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "service"
+      ]
+    }
+  }
+}

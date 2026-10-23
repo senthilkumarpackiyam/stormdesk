@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "search_kb",
+  "description": "Search the IT knowledge base for step-by-step fixes. Use the caller's own words.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/search_kb",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for search_kb",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "query": {
+          "type": "string",
+          "description": "The problem in the caller's own words, e.g. 'vpn keeps dropping'."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "query"
+      ]
+    }
+  }
+}

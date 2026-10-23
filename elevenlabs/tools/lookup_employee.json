@@ -1,0 +1,38 @@
+{
+  "type": "webhook",
+  "name": "lookup_employee",
+  "description": "Find the caller in the employee directory from their employee ID and full name. Call this first on every call. match=false means the ID and name don't fit a record.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/lookup_employee",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for lookup_employee",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "employee_id": {
+          "type": "string",
+          "description": "Employee ID the caller gave, e.g. E1001. Spoken digits are fine."
+        },
+        "full_name": {
+          "type": "string",
+          "description": "The caller's full name, as they said it."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "employee_id",
+        "full_name"
+      ]
+    }
+  }
+}

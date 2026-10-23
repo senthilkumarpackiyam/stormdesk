@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "get_caller_history",
+  "description": "The caller's open tickets and recent ones. Call right after lookup_employee, so you can ask whether they're calling about an existing ticket.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/get_caller_history",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for get_caller_history",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "employee_id": {
+          "type": "string",
+          "description": "The employee ID returned by lookup_employee."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "employee_id"
+      ]
+    }
+  }
+}

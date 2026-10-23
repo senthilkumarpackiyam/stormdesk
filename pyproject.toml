@@ -1,0 +1,32 @@
+[project]
+name = "stormdesk"
+version = "0.1.0"
+description = "Outage-aware, social-engineering-resistant IT service desk voice agent"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "langgraph>=0.6",
+    "langgraph-checkpoint-sqlite>=2.0",
+    "streamlit>=1.40",
+    "pyngrok>=7.2",
+    "langchain-openai>=0.3",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["stormdesk"]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,33 @@
+{
+  "type": "webhook",
+  "name": "check_verification_code",
+  "description": "Check the 6-digit code the caller read out. Three wrong codes end verification for this call.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/check_verification_code",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for check_verification_code",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "code": {
+          "type": "string",
+          "description": "The 6-digit code exactly as the caller read it out."
+        }
+      },
+      "required": [
+        "conversation_id",
+        "code"
+      ]
+    }
+  }
+}

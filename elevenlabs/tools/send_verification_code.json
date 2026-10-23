@@ -1,0 +1,28 @@
+{
+  "type": "webhook",
+  "name": "send_verification_code",
+  "description": "Text a 6-digit code to the caller's mobile number on file. Needed before any account change. Call only after lookup_employee has matched the caller.",
+  "response_timeout_secs": 15,
+  "tool_call_sound": null,
+  "api_schema": {
+    "url": "{{PUBLIC_URL}}/tools/send_verification_code",
+    "method": "POST",
+    "request_headers": {
+      "X-StormDesk-Key": "{{STORMDESK_TOOL_SECRET}}",
+      "ngrok-skip-browser-warning": "1"
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Arguments for send_verification_code",
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ]
+    }
+  }
+}
