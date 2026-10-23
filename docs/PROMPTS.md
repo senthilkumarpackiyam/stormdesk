@@ -84,3 +84,10 @@ Tool: Claude Code (VS Code extension), model Claude Opus 5.5.
 > GO
 
 **Outcome:** a code-quality pass, the architecture diagram (Mermaid, rendered to PNG), the README rebuilt for reviewers (one-liner, results, the agent framework filled in), the project write-up for the Google Doc (`docs/SUBMISSION.md`), the 5-minute demo script, and the first commit.
+
+### Prompt 16: publish (2026-10-23)
+
+> github repository url : https://github.com/senthilkumarpackiyam/stormdesk
+> i would prefer option (a)
+
+**Outcome:** pushed to GitHub (public). The write-up was created as a Google Doc in Drive from `docs/SUBMISSION.md`, with the diagram and screenshots embedded from the repository. A render check of the first version found captions under the wrong screenshots and an unreadably wide diagram, so a corrected doc was created (captions under their images, a vertical diagram) and the first one was renamed "OLD DRAFT".
