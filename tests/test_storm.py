@@ -11,7 +11,7 @@ def _report_vpn(client, cid, employee_id, name):
 
 def _storm_proposal(client):
     add_storm("vpn", "Chennai", settings.storm_threshold - 1)  # Ravi and Ananya already reported it
-    out = _report_vpn(client, "c1", "E1004", "Arjun Mehta")
+    out = _report_vpn(client, "c1", "E1004", "Karthik")
     assert out["technician_alerted"], out
     return client.get("/admin/approvals", params={"status": "pending"}).json()["approvals"][0]
 
@@ -71,5 +71,5 @@ def test_account_requests_are_not_outage_reports(client):
 
 def test_two_reports_are_not_a_storm(client):
     add_storm("vpn", "Chennai", 1)
-    out = _report_vpn(client, "c1", "E1004", "Arjun Mehta")
+    out = _report_vpn(client, "c1", "E1004", "Karthik")
     assert out["technician_alerted"] is False

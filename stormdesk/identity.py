@@ -23,7 +23,7 @@ def _close(a: str, b: str) -> bool:
 
 
 def names_match(said: str, on_file: str) -> bool:
-    """Full name required: 'Priya Ramen' matches 'Priya Raman', a bare 'Priya' does not."""
+    """Full name required: 'Sarah Jeesan' matches 'Sarah Jeesen', a bare 'Sarah' does not."""
     a, b = _name_parts(said), _name_parts(on_file)
     if not a or not b:
         return False

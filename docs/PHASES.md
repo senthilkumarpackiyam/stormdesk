@@ -6,7 +6,7 @@ Each phase is finished, tested, and explained before the next one starts.
 |---|---|---|---|
 | 1 | **The toolbox** | Backend server, live data feeds, practice company, 7 look-up tools, tests | Nothing |
 | 2 | **Safety rules and memory** | One-time-code identity check, ticket creation with a backup outbox, approval queue (LangGraph pauses for a human), storm → major-incident proposal, hard "never do" rules | Nothing |
-| 3 | **The control room** | Streamlit console for the human technician: approvals, storm board, tickets, simulated phone inbox, demo switches | Nothing |
+| 3 | **The control room** | Console for the human technician: approvals, storm board, tickets, simulated phone inbox, demo switches (first Streamlit; rebuilt as an HTML5 page after phase 7) | Nothing |
 | 4 | **The voice** | ElevenLabs team of 5 voice agents wired to the tools through a public tunnel; first real calls | ElevenLabs API key, ngrok account |
 | 5 | **The reviewer** | After each call, 3 AI reviewers + an orchestrator score it (resolved? process followed? follow-up needed?) on Nebius | Nebius Token Factory API key (LangSmith key optional) |
 | 6 | **Stress test** | Failure drills, 12 test callers (including impostors), fixes; optional real ServiceNow | Optional: ServiceNow developer instance |
@@ -177,3 +177,17 @@ Each phase is finished, tested, and explained before the next one starts.
 - **Project write-up** ([SUBMISSION.md](SUBMISSION.md)): the Google Doc content. Overview, datasets, the prompts used, iterations and learnings.
 - **Demo script** ([DEMO_SCRIPT.md](DEMO_SCRIPT.md)): a timed shot list with the exact lines to say, where to click, and what to do if something goes wrong while recording.
 - **First commit**, made locally. Pushing to GitHub needs the repository address.
+
+---
+
+## After phase 7: a new look for the control room ✅
+
+**In one sentence:** the technician's screen was rebuilt as a modern web page in StormDesk's own colours, and the practice employees got new names.
+
+- **Why:** the first console was made with Streamlit, a tool that turns a Python script into a web page quickly. It worked, but it looked plain and dated.
+- **What it is now:** a normal web page (HTML5) that the StormDesk server shows by itself at **http://localhost:8000/console**. There's no separate program to start, so running StormDesk now takes two terminal windows instead of three.
+- **The look:** royal-blue header bands with white letters (like the Verint example), Shuttle Gray text, a cyan accent, and a new logo: a service-desk headset in amber and orange, with a storm cloud and a lightning bolt inside it. The name "StormDesk" is set in Orbitron, a futuristic font, and the text is a little larger for easy reading.
+- **Same seven tabs, same features:** approvals, storm board, tickets, phones, calls, reviews, drills. It still refreshes itself every few seconds, keeps whatever you're typing, and pops up a notice when a new approval arrives.
+- **Safe by design:** anything that comes from the server is "escaped" before it's shown, so a ticket containing web code is displayed as text and can't run. The page only runs its own script. It's still local-only unless an admin password is set, and then it asks for that password before showing anything.
+- **New names:** Senthil Kumar is the IT technician, Sarah Jeesen is the employee who lost her phone, and Karthik reports the VPN outage.
+- **Checked** in a real Chrome browser: every tab, approving a request, typing during a refresh, the password prompt, and phone-sized screens. 169 automatic tests pass.

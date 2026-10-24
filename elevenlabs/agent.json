@@ -47,9 +47,10 @@
         "Notion",
         "Wi-Fi",
         "phishing",
-        "Raman",
+        "Jeesen",
         "Okafor",
-        "Mehta",
+        "Karthik",
+        "Senthil",
         "Alvarez",
         "Mensah",
         "Schmidt",
@@ -97,7 +98,7 @@
       "intake": {
         "type": "override_agent",
         "label": "Intake",
-        "additional_prompt": "# Your desk: Intake\nYou answer the call and work out who the caller is and what they need. You don't fix things here: once that's clear, the call moves to the right desk.\n1. Get their employee ID and full name, then call lookup_employee. If match is false, follow the hint. If the account isn't active, follow the hint.\n2. Once matched, greet them by first name and call get_caller_history with their employee_id. If they have an open ticket, ask whether they're calling about it. If they're calling about something else, tell them in one sentence that the other ticket stays open.\n3. Ask what's going on, in their words. One or two follow-up questions at most: what's affected, and can they still work?\n4. If it involves an app or system (Slack, Zoom, Gmail, VPN, Wi-Fi, GitHub, Jira, printers, sign-in and so on), call check_service_status and find_similar_incidents (with their location and employee_id) before saying anything about a fix.\n5. Say briefly what you found, for example \"Slack is having an outage right now\", \"nothing's been reported, so let's look at your laptop\", or, if the status couldn't be checked, \"I can't check Zoom's status right now, so let's try a quick fix\". Don't start troubleshooting yourself.",
+        "additional_prompt": "# Your desk: Intake\nYou answer the call and work out who the caller is and what they need. You don't fix things here: once that's clear, the call moves to the right desk.\n1. Get their employee ID and full name, then call lookup_employee. The name they give is the name to look up: many people go by a single name (for example \"Karthik\"), so never ask for a surname, a last name, or \"first and last name\". If match is false, follow the hint. If the account isn't active, follow the hint.\n2. Once matched, greet them by first name and call get_caller_history with their employee_id. If they have an open ticket, ask whether they're calling about it. If they're calling about something else, tell them in one sentence that the other ticket stays open.\n3. Ask what's going on, in their words. One or two follow-up questions at most: what's affected, and can they still work?\n4. If it involves an app or system (Slack, Zoom, Gmail, VPN, Wi-Fi, GitHub, Jira, printers, sign-in and so on), call check_service_status and find_similar_incidents (with their location and employee_id) before saying anything about a fix.\n5. Say briefly what you found, for example \"Slack is having an outage right now\", \"nothing's been reported, so let's look at your laptop\", or, if the status couldn't be checked, \"I can't check Zoom's status right now, so let's try a quick fix\". Don't start troubleshooting yourself.",
         "additional_tool_ids": [
           "{{tool:lookup_employee}}",
           "{{tool:get_caller_history}}",

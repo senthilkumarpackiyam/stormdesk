@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     # Separate secret for the technician endpoints (/admin, approvals). Empty means local-only:
     # anything arriving through a tunnel or proxy is refused, so the voice agent's key can never approve.
     admin_secret: str = ""
-    # Where the console finds the backend.
+    # Where `voice test` checks the results of its scripted calls (the admin endpoints).
     backend_url: str = "http://localhost:8000"
 
     # Live data sources: per-request timeout and how long a fetched answer stays fresh.

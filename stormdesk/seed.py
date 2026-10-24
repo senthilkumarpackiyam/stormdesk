@@ -17,13 +17,13 @@ from stormdesk.store.db import connect, init_db
 
 # id, full name, department, title, location, manager, vip, status, laptop model, os product, os release, os label
 EMPLOYEES = [
-    ("E1001", "Priya Raman", "Finance", "Senior Accountant", "Chennai", "E1011", 0, "active",
+    ("E1001", "Sarah Jeesen", "Finance", "Senior Accountant", "Chennai", "E1011", 0, "active",
      "Dell Latitude 7440", "windows", "11-24h2-w", "Windows 11 24H2"),
     ("E1002", "Daniel Okafor", "Sales", "VP Sales EMEA", "London", "E1020", 1, "active",
      "MacBook Pro 14", "macos", "14", "macOS 14 Sonoma"),
     ("E1003", "Mei Lin Chen", "Engineering", "Staff Engineer", "Austin", "E1016", 0, "active",
      "MacBook Pro 16", "macos", "26", "macOS 26 Tahoe"),
-    ("E1004", "Arjun Mehta", "Engineering", "Software Engineer", "Bengaluru", "E1016", 0, "active",
+    ("E1004", "Karthik", "Engineering", "Software Engineer", "Bengaluru", "E1016", 0, "active",
      "Lenovo ThinkPad X1 Carbon", "windows", "11-25h2-e", "Windows 11 25H2"),
     ("E1005", "Sofia Alvarez", "HR", "HR Business Partner", "Austin", "E1020", 0, "active",
      "MacBook Air 13", "macos", "15", "macOS 15 Sequoia"),
@@ -53,7 +53,7 @@ EMPLOYEES = [
      "MacBook Pro 14", "macos", "26", "macOS 26 Tahoe"),
     ("E1018", "Chloe Dubois", "Operations", "Head of Operations", "London", "E1020", 0, "active",
      "Surface Laptop 7", "windows", "11-25h2-e", "Windows 11 25H2"),
-    ("E1019", "Vikram Rao", "IT", "Service Desk Technician", "Chennai", "E1018", 0, "active",
+    ("E1019", "Senthil Kumar", "IT", "Service Desk Technician", "Chennai", "E1018", 0, "active",
      "Lenovo ThinkPad P1", "windows", "11-25h2-e", "Windows 11 25H2"),
     ("E1020", "Olivia Bennett", "Executive", "Chief Executive Officer", "Austin", None, 1, "active",
      "MacBook Pro 14", "macos", "26", "macOS 26 Tahoe"),
@@ -192,6 +192,10 @@ RESET_ORDER = (
 )
 
 
+def _email(name: str) -> str:
+    return name.lower().replace("'", "").replace(" ", ".") + "@acme.example"
+
+
 def seed(reset: bool = False) -> None:
     init_db()
     if reset:
@@ -202,10 +206,9 @@ def seed(reset: bool = False) -> None:
                 conn.execute(f"DELETE FROM {table}")
         for (eid, name, dept, title, loc, mgr, vip, status, model, os_product, os_release, os_label) in EMPLOYEES:
             num = eid[1:]
-            email = name.lower().replace("'", "").replace(" ", ".") + "@acme.example"
             conn.execute(
                 "INSERT INTO employees VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (eid, name, email, f"+1-555-01{num[2:]}", dept, title, loc, mgr, vip, status),
+                (eid, name, _email(name), f"+1-555-01{num[2:]}", dept, title, loc, mgr, vip, status),
             )
             conn.execute(
                 "INSERT INTO devices VALUES (?, ?, 'laptop', ?, ?, ?, ?)",
@@ -224,9 +227,15 @@ def seed(reset: bool = False) -> None:
 
 
 def seed_if_empty() -> None:
+    """Load the practice company on first start. On later starts, bring renamed employees up to date."""
     init_db()
     with connect() as conn:
         empty = conn.execute("SELECT COUNT(*) FROM employees").fetchone()[0] == 0
+        if not empty:
+            # A database made before a rename keeps its tickets and calls; only the names and emails change.
+            for eid, name, *_ in EMPLOYEES:
+                conn.execute("UPDATE employees SET full_name = ?, email = ? WHERE employee_id = ? AND full_name != ?",
+                             (name, _email(name), eid, name))
     if empty:
         seed()
 

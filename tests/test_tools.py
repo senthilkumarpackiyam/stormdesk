@@ -17,9 +17,9 @@ def call(client, tool, **body):
 # --- lookup_employee ---
 
 def test_lookup_match_tolerates_speech_to_text_slips(client):
-    out = call(client, "lookup_employee", employee_id="e 1 0 0 1", full_name="Priya Ramen")
+    out = call(client, "lookup_employee", employee_id="e 1 0 0 1", full_name="Sarah Jeesan")
     assert out["match"] and out["employee_id"] == "E1001"
-    assert out["first_name"] == "Priya"
+    assert out["first_name"] == "Sarah"
     assert out["identity_verified"] is False
     assert out["devices"][0]["os"] == "Windows 11 24H2"
 
@@ -30,11 +30,11 @@ def test_lookup_wrong_name_looks_exactly_like_unknown_id(client):
     assert wrong_name == unknown_id
     assert wrong_name["match"] is False
     assert "_reason" not in wrong_name
-    assert "Priya" not in str(wrong_name)
+    assert "Sarah" not in str(wrong_name)
 
 
 def test_lookup_first_name_only_is_not_enough(client):
-    assert call(client, "lookup_employee", employee_id="E1001", full_name="Priya")["match"] is False
+    assert call(client, "lookup_employee", employee_id="E1001", full_name="Sarah")["match"] is False
 
 
 def test_lookup_terminated_account(client):
@@ -200,7 +200,7 @@ def test_advisories_nothing_found(client):
 # --- plumbing ---
 
 def test_every_call_is_audited(client):
-    call(client, "lookup_employee", employee_id="E1001", full_name="Priya Raman", conversation_id="conv-1")
+    call(client, "lookup_employee", employee_id="E1001", full_name="Sarah Jeesen", conversation_id="conv-1")
     call(client, "search_kb", query="vpn", conversation_id="conv-1")
     entries = client.get("/admin/audit", params={"conversation_id": "conv-1"}).json()["entries"]
     assert [e["tool"] for e in entries] == ["search_kb", "lookup_employee"]

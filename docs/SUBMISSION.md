@@ -31,7 +31,7 @@ It is built around two real service-desk problems that a generic "password reset
 | **13 tools** | Look-ups (employee, history, live status, colleagues' reports, knowledge base, device support, security advisories) and writes (verification code, tickets, notes, sensitive requests). Every answer includes an `agent_hint`: one plain instruction for what to say next | FastAPI; tool definitions generated automatically for ElevenLabs |
 | **Three permission levels** | Look-ups: the agent alone. Small changes: the *caller* confirms a read-back (enforced in code). Account changes: code verification *and* a *technician's* approval | Policy enforced in code |
 | **Approval process** | The request pauses until a technician decides, survives restarts, and expires if forgotten | LangGraph `interrupt()` + SQLite checkpointer |
-| **Technician console** | Approvals, storm board, tickets, each employee's simulated phone, call timelines, reviews, failure switches | Streamlit |
+| **Technician console** | Approvals, storm board, tickets, each employee's simulated phone, call timelines, reviews, failure switches. Refreshes itself every few seconds | An HTML5 page (plain HTML, CSS and JavaScript) served by the backend at `/console`; first built in Streamlit, then rebuilt |
 | **Post-call review** | A case file plus 9 rule checks (plain code); three AI reviewers in parallel (resolution, process, experience), a follow-up planner and a judge produce a scorecard | LangGraph + LangChain on Nebius (Kimi-K3, backup DeepSeek-V4.1-Flash), LangSmith tracing |
 
 ### The agent framework
@@ -83,6 +83,11 @@ The whole project was built with **Claude Code** (Opus 5.5) in VS Code. I set th
 12. "GO" (phase 5: the reviewers)
 13. "GO" (phase 6: stress test)
 14. "GO" (phase 7: this submission pack)
+15. "github repository url : https://github.com/senthilkumarpackiyam/stormdesk / i would prefer option (a)" (publish, and the write-up as a Google Doc)
+16. "guide me step by step like teaching a layman who is non-technical that how to test this voice agent functionality. do not move to next step until i say go" *(then "go" between steps)*
+17. *(With a screenshot of a Verint screen as the style example)* "hold on, I dont like the way streamlit shows the application. It is very dull and outdated application and not attractive at all. Could you check if the below changes are possible now to od? -- Change the employee names to Senthil Kumar, Sarah Jeesen, and Karthik -- I want a modernized , futuristic icon for the company name "StormDesk". The icon should represent the business function. Use the official and shuttle colors. -- Use the headers something like attached picture highlighted background blue format with white letters. -- Over all application should be futuristic and attractive. -- Use the official colors -- check if this can be a html5 application rather than streamlit one" *(asked to choose, I picked: Senthil as the technician; blue with Shuttle Gray; replace Streamlit completely)*
+18. *(With a screenshot of the new console)* "few problems that needs to be solved for sure: -- it is still showing old employees in the list -- I dont like the storm desk font. make it modern and futuristic -- I dont like the icon, alter it, no hexagon but use headset with storm, use different color than blue -- I see all the fonts and sizes are very smal, make it liitle bigger in fotn size to see -- remaining all are good"
+19. "guide me step by step…" test, continued: three live voice calls (lost phone, impostor, VPN storm), all graded pass; then "shutdown" and "do all four" (fix what the test found, fresh screenshots, publish, refresh this doc)
 
 **What worked about this way of prompting:** one clear brief, then *phase gates*. Each phase ended with a plain-English explanation, test results and what I needed to prepare next, so I always understood what had been built before approving more. I gave least-privilege keys (for example, an ElevenLabs key restricted to ElevenAgents) and kept them out of the chat by putting them in `.env`.
 
@@ -160,7 +165,7 @@ What the rounds found:
 
 ![Approvals](screenshots/console-approvals.png)
 
-**The technician's approval queue.** A pending MFA reset and a major-incident proposal, each with its risk signals or evidence.
+**The technician's approval queue.** A pending account unlock and a major-incident proposal, each with its risk signals or evidence, and a decided MFA reset below.
 
 ![Storm board](screenshots/console-storm-board.png)
 
@@ -176,4 +181,4 @@ What the rounds found:
 
 ![Review](screenshots/console-review-detail.png)
 
-**A post-call scorecard.** The review of the impostor call: a pass for the agent, and a flag about the impersonation attempt.
+**A post-call scorecard.** The real review (Kimi-K3 on Nebius) of a scripted impostor call: a pass for the agent, flags about the impersonation attempt, and rule checks from StormDesk's own records.

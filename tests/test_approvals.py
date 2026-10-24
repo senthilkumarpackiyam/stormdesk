@@ -36,13 +36,13 @@ def test_full_mfa_reset(client):
     assert decided["status"] == "executed" and decided["decided_by"] == "E1019"
     assert "enroll.acme.example" in messages(client, "E1001")[0]["body"]
     ticket = incident(client, req["ticket"])
-    assert ticket["state"] == "resolved" and "Vikram Rao" in ticket["notes"][-1]["note"]
+    assert ticket["state"] == "resolved" and "Senthil Kumar" in ticket["notes"][-1]["note"]
     with connect() as conn:
         change = conn.execute("SELECT * FROM identity_changes").fetchone()
     assert change["action"] == "mfa_reset" and change["performed_by"] == "E1019"
 
     status = call(client, "check_approval_status", conversation_id="c1", approval_id=req["approval_id"])
-    assert status["status"] == "executed" and "Vikram" in status["agent_hint"]
+    assert status["status"] == "executed" and "Senthil" in status["agent_hint"]
 
 
 def test_rejection(client):
@@ -63,7 +63,7 @@ def test_only_active_it_staff_can_decide(client):
 
 
 def test_nobody_approves_their_own_request(client):
-    verify(client, "c1", "E1019", "Vikram Rao")  # the technician calls in for himself
+    verify(client, "c1", "E1019", "Senthil Kumar")  # the technician calls in about their own account
     req = request_action(client, "c1", "account_unlock", "locked out")
     assert decide(client, req["approval_id"], "E1019").status_code == 403
     assert decide(client, req["approval_id"], "E1021").json()["status"] == "executed"

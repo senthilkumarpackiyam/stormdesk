@@ -43,7 +43,8 @@ SUPPORT_WARNING_DAYS = 60
 
 class LookupEmployeeIn(ToolRequest):
     employee_id: str = Field(..., description="Employee ID the caller gave, e.g. E1001. Spoken digits are fine.")
-    full_name: str = Field(..., description="The caller's full name, as they said it.")
+    full_name: str = Field(..., description="The caller's full name, as they said it. Some people have a single "
+                                             "name: use it as given.")
 
 
 @router.post(

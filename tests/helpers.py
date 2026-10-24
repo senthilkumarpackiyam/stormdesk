@@ -7,7 +7,7 @@ def call(client, tool, **body):
     return resp.json()
 
 
-def identify(client, cid, employee_id="E1001", name="Priya Raman"):
+def identify(client, cid, employee_id="E1001", name="Sarah Jeesen"):
     out = call(client, "lookup_employee", employee_id=employee_id, full_name=name, conversation_id=cid)
     assert out["match"], out
     return out
@@ -25,7 +25,7 @@ def latest_code(client, employee_id):
     raise AssertionError(f"no verification code texted to {employee_id}")
 
 
-def verify(client, cid, employee_id="E1001", name="Priya Raman"):
+def verify(client, cid, employee_id="E1001", name="Sarah Jeesen"):
     identify(client, cid, employee_id, name)
     assert call(client, "send_verification_code", conversation_id=cid)["ok"]
     out = call(client, "check_verification_code", conversation_id=cid, code=latest_code(client, employee_id))
@@ -42,11 +42,11 @@ def decide(client, approval_id, technician_id="E1019", approve=True, note=""):
 
 
 def storm_proposal(client):
-    """Two Chennai colleagues already reported the VPN; Arjun's report makes three. Returns the proposal."""
+    """Two Chennai colleagues already reported the VPN; Karthik's report makes three. Returns the proposal."""
     from stormdesk.seed import add_storm
 
     add_storm("vpn", "Chennai", 2)
-    identify(client, "storm-call", "E1004", "Arjun Mehta")
+    identify(client, "storm-call", "E1004", "Karthik")
     out = call(client, "create_incident", conversation_id="storm-call", summary="VPN won't connect", service="vpn",
                urgency="blocked", caller_confirmed=True)
     assert out["technician_alerted"], out

@@ -50,7 +50,7 @@ def test_three_wrong_codes_lock_the_call_and_alert_security(client):
     assert call(client, "create_incident", conversation_id="c1", summary="x", caller_confirmed=True)["error"] \
         == "session_locked"
     assert call(client, "lookup_employee", conversation_id="c1", employee_id="E1001",
-                full_name="Priya Raman")["error"] == "session_locked"
+                full_name="Sarah Jeesen")["error"] == "session_locked"
 
 
 def test_asking_for_a_new_code_does_not_buy_more_guesses(client):

@@ -60,10 +60,10 @@ class Rehearsal:
         return out
 
     def lost_phone(self) -> None:
-        scene("1. Priya lost her phone and can't approve sign-ins (verified MFA reset, live approval)")
+        scene("1. Sarah lost her phone and can't approve sign-ins (verified MFA reset, live approval)")
         cid = f"rehearse-{uuid.uuid4().hex[:6]}"
-        say("CALLER", "Hi, it's Priya Raman, employee E1001. I got a new phone and can't sign in.")
-        self.tool("lookup_employee", conversation_id=cid, employee_id="E1001", full_name="Priya Raman")
+        say("CALLER", "Hi, it's Sarah Jeesen, employee E1001. I got a new phone and can't sign in.")
+        self.tool("lookup_employee", conversation_id=cid, employee_id="E1001", full_name="Sarah Jeesen")
         self.tool("get_caller_history", conversation_id=cid, employee_id="E1001")
         self.tool("search_kb", conversation_id=cid, query="new phone can't approve sign in")
         self.tool("send_verification_code", conversation_id=cid)
@@ -98,8 +98,8 @@ class Rehearsal:
         numbers = add_storm("vpn", "Chennai", 2)
         say("EARLIER", f"Ravi and Ananya (Chennai) already reported the VPN: {', '.join(numbers)}")
         cid = f"rehearse-{uuid.uuid4().hex[:6]}"
-        say("CALLER", "Arjun Mehta, E1004. The VPN won't connect, I can't work.")
-        self.tool("lookup_employee", conversation_id=cid, employee_id="E1004", full_name="Arjun Mehta")
+        say("CALLER", "Karthik, E1004. The VPN won't connect, I can't work.")
+        self.tool("lookup_employee", conversation_id=cid, employee_id="E1004", full_name="Karthik")
         self.tool("check_service_status", conversation_id=cid, service="vpn")
         self.tool("find_similar_incidents", conversation_id=cid, service="vpn", location="Bengaluru",
                   employee_id="E1004")

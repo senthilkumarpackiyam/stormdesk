@@ -259,7 +259,7 @@ def test_follow_up_becomes_a_ticket_only_when_a_technician_says_so(client, monke
     number = client.post(url, json={"technician_id": "E1019"}).json()["ticket"]
     ticket = client.get(f"/admin/incidents/{number}").json()
     assert ticket["ticket_type"] == "request" and ticket["channel"] == "review"
-    assert "approved by Vikram Rao" in ticket["description"]
+    assert "approved by Senthil Kumar" in ticket["description"]
     assert client.get(f"/admin/reviews/{CID}").json()["report"]["follow_up"]["items"][0]["ticket"] == number
     assert client.post(url, json={"technician_id": "E1019"}).status_code == 409
     assert client.post(f"/admin/reviews/{CID}/follow-ups/7", json={"technician_id": "E1019"}).status_code == 404

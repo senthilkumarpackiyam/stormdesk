@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StormDesk Console</title>
+  <link rel="icon" href="/console/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Orbitron:wght@700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="/console/app.css">
+  <script src="/console/app.js" defer></script>
+</head>
+<body>
+  <header class="appbar">
+    <div class="appbar-row">
+      <a class="brand" href="/console" aria-label="StormDesk console home">
+        <img src="/console/logo.svg" alt="" width="50" height="50">
+        <span class="brand-text">
+          <span class="brand-name">Storm<b>Desk</b></span>
+          <span class="brand-sub">Service desk console · <span id="company">Acme Corp</span></span>
+        </span>
+      </a>
+      <div class="appbar-right">
+        <span class="live" id="live" title="Refreshing by itself every few seconds"><i></i><span>Live</span></span>
+        <label class="signin">
+          <span>Signed in as</span>
+          <select id="technician" aria-label="Signed in as"></select>
+        </label>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Console sections"></nav>
+  </header>
+
+  <main id="main">
+    <div class="banner" id="banner" hidden></div>
+    <section class="kpis" id="kpis" aria-label="At a glance"></section>
+    <section class="alerts" id="alerts" aria-label="Things switched on"></section>
+
+    <section class="panel" id="panel-approvals" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Approvals</h2><p>Account changes and major incidents wait here for a person. First come, first served.</p></div>
+      </div>
+      <div data-region="approvals"><div class="skeleton"></div></div>
+    </section>
+
+    <section class="panel" id="panel-storm" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Storm board</h2><p>When several people report the same thing, StormDesk proposes one major incident instead of many tickets.</p></div>
+      </div>
+      <div data-region="storm"><div class="skeleton"></div></div>
+      <div data-region="status"><div class="skeleton"></div></div>
+    </section>
+
+    <section class="panel" id="panel-tickets" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Tickets</h2><p>Everything the voice agent logged, and the major incidents they belong to.</p></div>
+        <div class="toolbar">
+          <label class="toggle"><input type="checkbox" id="tickets-open" checked><span class="toggle-ui"></span>Open only</label>
+          <label class="search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="tickets-search" placeholder="Number, summary, service, name" aria-label="Search tickets"></label>
+          <button class="btn ghost" data-action="refresh" data-tab="tickets" type="button">Refresh</button>
+        </div>
+      </div>
+      <div data-region="tickets"><div class="skeleton"></div></div>
+    </section>
+
+    <section class="panel" id="panel-phones" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Phones</h2><p>Nothing really leaves this machine: these are the texts and emails StormDesk would send.</p></div>
+        <div class="toolbar">
+          <label class="field-inline"><span>Whose phone?</span><select id="phone-of" aria-label="Whose phone?"></select></label>
+        </div>
+      </div>
+      <div data-region="phones"><div class="skeleton"></div></div>
+    </section>
+
+    <section class="panel" id="panel-calls" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Calls</h2><p>Every call, and every button the voice agent pressed during it.</p></div>
+        <div class="toolbar"><button class="btn ghost" data-action="refresh" data-tab="calls" type="button">Refresh</button></div>
+      </div>
+      <div data-region="calls"><div class="skeleton"></div></div>
+    </section>
+
+    <section class="panel" id="panel-reviews" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Reviews</h2><p>After every call, three AI reviewers on Nebius (resolution, process, caller experience), a follow-up
+          planner and a judge grade it. Rule checks come from StormDesk's own records, not the AI.</p></div>
+        <div class="toolbar"><button class="btn ghost" data-action="refresh" data-tab="reviews" type="button">Refresh</button></div>
+      </div>
+      <div data-region="reviews"><div class="skeleton"></div></div>
+    </section>
+
+    <section class="panel" id="panel-drills" role="tabpanel" hidden>
+      <div class="panel-head">
+        <div><h2>Drills</h2><p>Break a dependency on purpose, stage an outage or a ticket storm, or start over with fresh practice data.</p></div>
+      </div>
+      <div data-region="drills"><div class="skeleton"></div></div>
+    </section>
+  </main>
+
+  <footer class="foot">StormDesk · outage-aware, social-engineering-resistant IT service desk · practice data only</footer>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <dialog id="keydialog" aria-labelledby="keytitle">
+    <form method="dialog" id="keyform">
+      <header class="card-head"><h3 id="keytitle">Technician sign-in</h3></header>
+      <div class="card-body">
+        <p>This StormDesk asks for the admin key (<code>STORMDESK_ADMIN_SECRET</code> in its <code>.env</code> file).
+          It is kept in this browser tab only.</p>
+        <input class="input" type="password" id="keyinput" autocomplete="current-password" placeholder="Admin key" required>
+        <div class="row-end"><button class="btn primary" type="submit">Unlock</button></div>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

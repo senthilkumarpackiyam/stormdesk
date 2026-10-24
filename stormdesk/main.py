@@ -1,7 +1,8 @@
 """StormDesk tool backend.
 
     uv run uvicorn stormdesk.main:app --reload --port 8000
-    open http://localhost:8000/docs
+    open http://localhost:8000/console     # the technician console
+    open http://localhost:8000/docs        # every endpoint
 """
 
 import asyncio
@@ -12,6 +13,7 @@ from fastapi import FastAPI
 
 from stormdesk import housekeeping
 from stormdesk.admin import router as admin_router
+from stormdesk.console import router as console_router
 from stormdesk.seed import seed_if_empty
 from stormdesk.sources.http import fetcher
 from stormdesk.tools.read_tools import router as read_tools_router
@@ -41,6 +43,7 @@ app = FastAPI(
 app.include_router(read_tools_router)
 app.include_router(write_tools_router)
 app.include_router(admin_router)
+app.include_router(console_router)
 
 
 @app.get("/health", tags=["public"])

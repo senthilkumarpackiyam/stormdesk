@@ -33,7 +33,7 @@ flowchart LR
     end
 
     feeds[["Live data<br/>17 status pages · CISA KEV · endoflife.date"]]
-    console["Technician console (Streamlit)<br/>approvals · storms · tickets · phones · reviews · drills"]
+    console["Technician console (HTML5 web page at /console)<br/>approvals · storms · tickets · phones · reviews · drills"]
 
     subgraph RV["Post-call review · LangGraph + Nebius"]
         direction TB
@@ -63,6 +63,6 @@ flowchart LR
 | Tools | FastAPI, generated into ElevenLabs webhook tools from the same Pydantic models | 13 tools in three permission tiers; every answer carries an `agent_hint` |
 | Human-in-the-loop | LangGraph `interrupt()` + SQLite checkpointer | Account changes and major incidents pause for a technician; survive restarts |
 | Live data | Statuspage / Slack / Google feeds, CISA KEV, endoflife.date | "Is it them or us?", security advisories, out-of-support devices |
-| Technician | Streamlit | Approvals, storm board, tickets, simulated phones, call timelines, reviews, failure drills |
+| Technician | HTML5 page (plain HTML, CSS and JavaScript, served by the backend at `/console`) | Approvals, storm board, tickets, simulated phones, call timelines, reviews, failure drills |
 | Quality | LangGraph + LangChain on Nebius Token Factory (Kimi-K3, backup DeepSeek-V4.1-Flash), LangSmith | Post-call scorecards; rule checks that the AI can't override |
 | Evaluation | 15 scripted callers over ElevenLabs' WebSocket in text mode | Before/after runs with checks and reviews ([evals](evals/README.md)) |

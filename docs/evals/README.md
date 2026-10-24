@@ -5,6 +5,8 @@ Every run puts **15 scripted callers** through the **live ElevenLabs agent** (te
 - **checks** on what actually happened in StormDesk: approvals, tickets, lockouts, messages
 - **the post-call reviewers** (Kimi-K3 on Nebius): verdict and scores
 
+The runs were made before the practice employees were renamed (Priya Raman is now Sarah Jeesen, Arjun Mehta is Karthik, Vikram Rao is Senthil Kumar), so the reports use the old names.
+
 Each run has its own report: [baseline](baseline.md) · [after coaching](after.md) · [final](final.md) · [release](release.md). The raw data, including transcripts, is in the matching `.json` files.
 
 ## The runs

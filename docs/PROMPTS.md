@@ -91,3 +91,58 @@ Tool: Claude Code (VS Code extension), model Claude Opus 5.5.
 > i would prefer option (a)
 
 **Outcome:** pushed to GitHub (public). The write-up was created as a Google Doc in Drive from `docs/SUBMISSION.md`, with the diagram and screenshots embedded from the repository. A render check of the first version found captions under the wrong screenshots and an unreadably wide diagram, so a corrected doc was created (captions under their images, a vertical diagram) and the first one was renamed "OLD DRAFT".
+
+### Prompt 17: a guided test of the voice agent (2026-10-24)
+
+> guide me step by step like teaching a layman who is non-technical that how to test this voice agent functionality. do not move to next step until i say go
+
+> done, check if old copy running or not
+
+> go
+
+**Outcome:** a step-by-step walkthrough in plain English (stop old copies, start the backend, open the console, reset the data, start the voice link, test calls, read the reviews), pausing for "go" after each step. Paused at step 3 by the next prompt.
+
+### Prompt 18: redesign the console (2026-10-24)
+
+*(With a screenshot of a Verint screen: blue header bands with white letters.)*
+
+> hold on, I dont like the way streamlit shows the application. It is very dull and outdated application and not attractive at all. Could you check if the below changes are possible now to od?
+> -- Change the employee names to Senthil Kumar, Sarah Jeesen, and Karthik
+> -- I want a modernized , futuristic icon for the company name "StormDesk". The icon should represent the business function. Use the official and shuttle colors.
+> -- Use the headers something like attached picture highlighted background blue format with white letters.
+> -- Over all application should be futuristic and attractive.
+> -- Use the official colors
+> -- check if this can be a html5 application rather than streamlit one
+
+Asked three questions, the answers were: names → **"Senthil as the technician"** (Senthil Kumar replaces the IT technician, Sarah Jeesen the lost-phone caller, Karthik the VPN caller); colours → **"Blue + Shuttle Gray (Recommended)"**; Streamlit → **"Replace it completely"**.
+
+**Outcome:** the employees renamed everywhere (practice data, agent speech-recognition keywords, scenarios, tests, demo script). The Streamlit console was replaced by an HTML5 page served by the backend itself at `/console` (plain HTML, CSS and JavaScript, no build step, nothing extra to install): royal-blue header bands with white letters, Shuttle Gray text, a cyan accent, and a new logo. All seven tabs kept, with the same features. Every server value is escaped before display, under a strict Content-Security-Policy. Checked in Chrome with Playwright, including typing that survives refreshes, the admin-key prompt and phone width. New screenshots. 169 tests.
+
+### Prompt 19: polish the console (2026-10-24)
+
+*(With a screenshot of the new console.)*
+
+> i see the application as attached:
+>
+> few problems that needs to be solved for sure:
+>
+> -- it is still showing old employees in the list
+> -- I dont like the storm desk font. make it modern and futuristic
+> -- I dont like the icon, alter it, no hexagon but use headset with storm, use different color than blue
+> -- I see all the fonts and sizes are very smal, make it liitle bigger in fotn size to see
+> -- remaining all are good
+
+**Outcome:** on every start, StormDesk now brings renamed employees up to date in an existing database without wiping its tickets or calls (with a test), and the user's practice data was updated straight away. The name "StormDesk" is set in Orbitron with an amber "Desk". The new logo is an amber-to-orange headset with a storm cloud and a lightning bolt inside it, and no hexagon. Every text size is 15% larger. Checked in Chrome at desktop and phone width.
+
+### Prompt 20: the live test calls, and what came after (2026-10-24)
+
+> go
+
+*(Step by step: reset the data, start the voice, open the talk link. Safari couldn't use the microphone, so the link was opened in Chrome. Then three live calls.)*
+
+> shutdown
+
+> do all four
+
+**Outcome:** three live voice calls (Sarah's lost phone, an impostor posing as Daniel, Karthik's VPN storm) all worked and were graded pass by the reviewers. Karthik's call showed the agent asking a single-name caller for a surname twice. The fix is an explicit rule with an example. The scripted Karthik caller now answers the ID question the way a person would, and a new check fails if a surname is asked for. Re-run against the live agent: Karthik passed twice, and lost phone, impostor and wrong-ID passed as regressions. Fresh screenshots were taken from scripted calls with real reviews, then everything was published and the doc refreshed.
+

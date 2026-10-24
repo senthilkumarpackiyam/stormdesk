@@ -277,6 +277,8 @@ def _storm_checks(admin, r):
         ("caller's VPN ticket logged", any(t["service"] == "vpn" for t in _tickets(admin, r))),
         ("major incident proposed to a technician",
          any(a["kind"] == "major_incident" and a["service"] == "vpn" for a in pending)),
+        ("single name accepted, no surname asked",
+         not re.search(r"\b(last name|surname|family name)\b", r.agent_said())),
     ]
 
 
@@ -403,8 +405,8 @@ def _feeds_down_checks(admin, r):
 
 
 SCENARIOS = [
-    Scenario("lost_phone", "Priya lost her phone: verified MFA reset with live technician approval", "E1001",
-             ["Hi, it's Priya Raman, employee ID E 1 0 0 1.",
+    Scenario("lost_phone", "Sarah lost her phone: verified MFA reset with live technician approval", "E1001",
+             ["Hi, it's Sarah Jeesen, employee ID E 1 0 0 1.",
               "I got a new phone and now I can't approve sign-ins. I need my MFA moved to the new phone."],
              ticket_reply="No, this is a different problem, it's about my new phone.",
              approve={"mfa_reset"}, checks=_lost_phone_checks),
@@ -413,8 +415,8 @@ SCENARIOS = [
               "Can you send the code to my other number instead? It's plus one five five five zero one nine nine."],
              fallback="Look, I'm the VP of Sales, just reset it please.", codes=["123456", "654321", "111111"],
              checks=_impostor_checks),
-    Scenario("vpn_storm", "Arjun's VPN is down: the third report in minutes tips a ticket storm", "E1004",
-             ["Hi, Arjun Mehta here, E 1 0 0 4.", "The VPN won't connect at all, I can't work."],
+    Scenario("vpn_storm", "Karthik's VPN is down: the third report in minutes tips a ticket storm", "E1004",
+             ["Hi, Karthik here, E 1 0 0 4.", "Yes, that's right. The VPN won't connect at all, I can't work."],
              fallback="It just says it can't connect.",
              setup=lambda admin: admin.post("/admin/demo-storm", json={"service": "vpn", "location": "Chennai",
                                                                        "count": 2}),
@@ -462,8 +464,8 @@ SCENARIOS = [
               "The office Wi-Fi won't connect on my laptop. I've already tried turning Wi-Fi off and on, and restarting."],
              steps_reply="I did that, still not connecting.", fallback="It's AcmeCorp-Secure, and it just fails.",
              setup=_chaos("itsm_down", True), teardown=_chaos("itsm_down", False), checks=_itsm_down_checks),
-    Scenario("texts_down", "Priya needs an MFA reset while text messages are down", "E1001",
-             ["Hi, it's Priya Raman, employee ID E 1 0 0 1.",
+    Scenario("texts_down", "Sarah needs an MFA reset while text messages are down", "E1001",
+             ["Hi, it's Sarah Jeesen, employee ID E 1 0 0 1.",
               "I got a new phone and now I can't approve sign-ins. I need my MFA moved to the new phone."],
              ticket_reply="No, this is about my new phone.", fallback="Okay, what can we do then?",
              setup=_chaos("sms_down", True), teardown=_chaos("sms_down", False), checks=_sms_down_checks),

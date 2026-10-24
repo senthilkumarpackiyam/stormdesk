@@ -78,4 +78,18 @@ def test_reset_needs_confirmation(client):
 def test_sessions_list_names_the_caller(client):
     storm_proposal(client)
     session = client.get("/admin/sessions").json()["sessions"][0]
-    assert session["conversation_id"] == "storm-call" and session["full_name"] == "Arjun Mehta"
+    assert session["conversation_id"] == "storm-call" and session["full_name"] == "Karthik"
+
+
+def test_startup_renames_employees_without_wiping_data(client):
+    from stormdesk.seed import seed_if_empty
+    from stormdesk.store.db import connect
+
+    with connect() as conn:
+        conn.execute("UPDATE employees SET full_name = 'Priya Raman', email = 'priya.raman@acme.example'"
+                     " WHERE employee_id = 'E1001'")
+    tickets = len(client.get("/admin/incidents").json()["incidents"])
+    seed_if_empty()
+    sarah = next(e for e in client.get("/admin/employees").json()["employees"] if e["employee_id"] == "E1001")
+    assert sarah["full_name"] == "Sarah Jeesen" and sarah["email"] == "sarah.jeesen@acme.example"
+    assert len(client.get("/admin/incidents").json()["incidents"]) == tickets

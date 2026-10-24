@@ -12,7 +12,6 @@ dependencies = [
     "pydantic-settings>=2.3",
     "langgraph>=0.6",
     "langgraph-checkpoint-sqlite>=2.0",
-    "streamlit>=1.40",
     "pyngrok>=7.2",
     "langchain-openai>=0.3",
 ]

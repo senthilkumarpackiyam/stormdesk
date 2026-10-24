@@ -39,7 +39,7 @@ def test_priority_matrix(impact, urgency, vip, expected):
 
 
 def test_duplicate_points_to_existing_ticket(client):
-    identify(client, "c1")  # Priya already has INC0010001 open for the VPN
+    identify(client, "c1")  # Sarah already has INC0010001 open for the VPN
     out = call(client, "create_incident", conversation_id="c1", summary="VPN dropping again", service="vpn",
                caller_confirmed=True)
     assert out["created"] is False

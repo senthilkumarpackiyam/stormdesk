@@ -109,3 +109,17 @@ What changed along the way, and why. Feeds the "iterations tried" and "learnings
 | 3 | Box titles wrapped and hid behind the first box | Mermaid's `wrappingWidth` and `subGraphTitleMargin` set inside the diagram, so GitHub uses them too | Look at the output |
 | 4 | The write-up said the prompts were "verbatim" but had quietly fixed two typos, and claimed voice had been "tested by hand" | Exact wording restored; the limitation now states only what's known | Documentation should be as honest as the evaluations |
 | 5 | The first Google Doc looked right as text, but its rendered pages showed each caption sitting under the *previous* screenshot (images pushed to the next page left their captions behind), and the wide diagram was unreadable at page width | Captions placed under their images; a vertical version of the diagram for the doc; a corrected doc created (the Docs editing connector wasn't available to fix it in place) and the first renamed "OLD DRAFT" | Check the rendered page, not just the text |
+
+## After phase 7: the console redesign
+
+| # | What happened | Change | Learning |
+|---|---|---|---|
+| 1 | The Streamlit console worked but looked plain and dated, and needed its own program and terminal | Rebuilt as one HTML5 page served by the backend at `/console`: no build step, nothing extra to install, two terminals instead of three | A demo is judged on how it looks too |
+| 2 | Refreshing a screen every few seconds would wipe what the technician was typing | A region is redrawn only when its content changes; typed text, focus, scroll and open timeline steps are kept. Checked by typing in Chrome and waiting past a refresh | A live screen must respect the person using it |
+| 3 | Server data shown in a web page could carry HTML | One escaping helper for every value, a strict Content-Security-Policy, no inline scripts; a test fails if the script ever writes unescaped HTML | Make the safe way the only way |
+| 4 | Two approvals created in the same second showed the newer first (the Streamlit console had the same hidden bug) | Sorted by time, then by approval ID | "First come, first served" needs a tie-break |
+| 5 | With an admin secret, a browser can't send the key header for the page itself | The page (which holds no data) loads; its script asks for the key once and keeps it in that browser tab only | Guard the data, not the empty page |
+| 6 | The docs screenshot of a review used hand-written sample data | Labelled "sample data" on screen and in the caption | Screenshots should be as honest as the evaluations |
+| 7 | A live call: the agent asked Karthik (who has one name) for a surname twice. The scripted Karthik never answered follow-up questions, so the scenario couldn't catch it | An explicit rule with an example ("many people go by a single name… never ask for a surname"). The scripted caller answers the ID question as a person would, and a new check fails if a surname is asked for. Karthik passed twice on the live agent, and three identification scenarios passed as regressions | Test with the people you actually have; a scripted caller that ignores questions hides problems |
+| 8 | Safari's talk page failed with `navigator.mediaDevices` undefined | The demo script and walkthrough say to open the talk link in Chrome | Check the browser before blaming the agent |
+

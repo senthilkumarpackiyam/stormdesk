@@ -4,17 +4,16 @@ The course asks for: what you built, how you used AI coding tools, and the final
 
 ## Before you record (about 10 minutes)
 
-1. **Three terminals** in the project folder:
+1. **Two terminals** in the project folder:
    ```bash
-   uv run uvicorn stormdesk.main:app --port 8000      # 1. backend
-   uv run streamlit run stormdesk/console/app.py      # 2. console (opens http://localhost:8501)
-   uv run python -m stormdesk.voice up                # 3. tunnel + deploy: copy the "talk" link it prints
+   uv run uvicorn stormdesk.main:app --port 8000      # 1. backend; the console is at http://localhost:8000/console
+   uv run python -m stormdesk.voice up                # 2. tunnel + deploy: copy the "talk" link it prints
    ```
 2. **Reset the practice data:** console → 🧪 Drills → tick the box → *Reset practice data*.
 3. **Prepare the ticket storm:** 🧪 Drills → *Set up a ticket storm*: service **VPN**, office **Chennai**, reports **2** → *Add reports*. Your call will be the third.
 4. **Open these tabs in Chrome:**
-   - the **talk link**, with the microphone allowed
-   - the **console**
+   - the **talk link**, with the microphone allowed (use Chrome: in Safari the talk page can't reach the microphone)
+   - the **console**: http://localhost:8000/console
    - `docs/architecture.png`
    - the **ElevenLabs dashboard** on the agent's *Workflow* view
    - `docs/evals/README.md` on GitHub
@@ -33,9 +32,9 @@ The course asks for: what you built, how you used AI coding tools, and the final
 
 ### 0:55–2:15 · Call 1: lost phone, with live approval (talk link + console)
 Say, as the caller:
-1. "Hi, it's Priya Raman, employee E one zero zero one."
+1. "Hi, it's Sarah Jeesen, employee E one zero zero one."
 2. *(If asked about her VPN ticket)* "No, it's something new. I got a new phone and can't approve sign-ins. I need my MFA moved."
-3. *(It texts a code.)* **Switch to console → 📱 Phones** (Priya is selected) → read the big code aloud, digit by digit.
+3. *(It texts a code.)* **Switch to console → 📱 Phones** (Sarah is selected) → read the big code aloud, digit by digit.
 4. *(It reads the request back.)* "Yes, please."
 5. *(It says a technician is reviewing.)* **Switch to 🔔 Approvals** → point at the *risk signals* → click **Approve**.
 6. Back on the call: the agent says it's approved and done. "No, that's everything, thanks."
@@ -53,7 +52,7 @@ Start a new call on the talk link:
 > "Urgency, seniority, another number: the standard social-engineering script. The tool for sending codes doesn't even have a phone-number field. And in testing we found the AI could be pressured into moving the call away from the verification desk mid-check, so that's now blocked too."
 
 ### 3:05–3:45 · Call 3: the ticket storm
-1. "Arjun Mehta, E one zero zero four. The VPN won't connect, I can't work."
+1. "Karthik, E one zero zero four. The VPN won't connect, I can't work."
 2. *(It says colleagues reported the same thing.)* "Yes, please" to the read-back. Hang up after the goodbye.
 3. **Console → 🔔 Approvals:** a *major incident* proposal with its evidence → **Declare major incident**.
 4. **🌩️ Storm board:** the major incident, 3 linked tickets, and "Resolve and text everyone affected".
@@ -76,6 +75,6 @@ Optional: show the LangSmith trace for that review (project `stormdesk-reviews`)
 |---|---|
 | The voice mishears your ID | Say it again, slower, digit by digit. The agent reads it back |
 | Voice isn't cooperating at all | Use `uv run python -m stormdesk.voice chat` in a terminal and type the same lines. It's the same agent, desks and tools |
-| The review hasn't appeared yet | Click 🔄 Refresh on the Reviews tab after a minute, or show the Priya review instead |
+| The review hasn't appeared yet | Click 🔄 Refresh on the Reviews tab after a minute, or show the Sarah review instead |
 | You need a clean slate | 🧪 Drills → *Reset practice data*, then *Set up a ticket storm* again |
 | The talk link stops working | Restart terminal 3 (`voice up`); it re-points the agent automatically |

@@ -86,7 +86,7 @@ EDGES = [
 # Words the speech recogniser should expect: product names and the practice company's people.
 ASR_KEYWORDS = [
     "StormDesk", "Acme", "VPN", "Ivanti", "Okta", "MFA", "Slack", "Zoom", "Gmail", "Jira", "Confluence", "GitHub",
-    "Figma", "Notion", "Wi-Fi", "phishing", "Raman", "Okafor", "Mehta", "Alvarez", "Mensah", "Schmidt",
+    "Figma", "Notion", "Wi-Fi", "phishing", "Jeesen", "Okafor", "Karthik", "Senthil", "Alvarez", "Mensah", "Schmidt",
     "Shankar", "Noor", "Iyer", "Dubois", "Fischer",
 ]
 

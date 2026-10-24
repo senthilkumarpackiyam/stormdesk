@@ -53,7 +53,7 @@ class ExperienceReview(BaseModel):
 
 
 class FollowUp(BaseModel):
-    action: str = Field(description="What must be done, as an instruction, e.g. 'Call Priya back about the VPN'.")
+    action: str = Field(description="What must be done, as an instruction, e.g. 'Call Sarah back about the VPN'.")
     owner: Literal["service_desk", "security_team", "on_call_technician", "caller"]
     urgency: Literal["today", "this_week"]
     reason: str

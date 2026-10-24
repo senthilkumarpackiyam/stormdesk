@@ -1,141 +1,54 @@
-"""The console, driven the way a technician would: Streamlit's AppTest loads the real app, types into
-fields and clicks buttons, while the app talks to the real backend (FastAPI TestClient)."""
+"""The HTML5 console: served by the backend, local-only unless there's an admin secret, and its script
+never puts server data into the page unescaped. (Its screens were checked by hand in Chrome.)"""
 
+import re
 from pathlib import Path
 
-import pytest
-from streamlit.testing.v1 import AppTest
-
 from stormdesk.config import settings
-from stormdesk.console import client as console_client
-from tests.helpers import call, identify, latest_code, messages, request_action, storm_proposal, verify
 
-APP = str(Path(__file__).resolve().parent.parent / "stormdesk" / "console" / "app.py")
-
-
-@pytest.fixture
-def console(client, monkeypatch):
-    monkeypatch.setattr(console_client, "override", client)
-
-    def open_console() -> AppTest:
-        app = AppTest.from_file(APP, default_timeout=30)
-        app.run()
-        assert not app.exception, app.exception
-        return app
-
-    return open_console
+WEB = Path(__file__).resolve().parent.parent / "stormdesk" / "web"
+TUNNEL = {"X-Forwarded-For": "203.0.113.7"}
 
 
-def texts(elements) -> str:
-    return " ".join(str(e.value) for e in elements)
+def test_console_page_and_its_files(client):
+    page = client.get("/console")
+    assert page.status_code == 200 and page.headers["content-type"].startswith("text/html")
+    assert '<script src="/console/app.js"' in page.text
+    assert "script-src 'self'" in page.headers["content-security-policy"]
+    assert "frame-ancestors 'none'" in page.headers["content-security-policy"]
+    for name, kind in (("app.js", "text/javascript"), ("app.css", "text/css"), ("logo.svg", "image/svg+xml")):
+        resp = client.get(f"/console/{name}")
+        assert resp.status_code == 200 and resp.headers["content-type"].startswith(kind), name
 
 
-def test_loads_with_nothing_waiting(console):
-    app = console()
-    assert "Nothing waiting for approval" in texts(app.success)
-    assert app.selectbox(key="technician").value == "E1019"
-    assert [t.label for t in app.tabs][:2] == ["🔔 Approvals", "🌩️ Storm board"]
+def test_home_opens_the_console(client):
+    resp = client.get("/", follow_redirects=False)
+    assert resp.status_code in (302, 307) and resp.headers["location"] == "/console"
 
 
-def test_approve_from_the_console(console, client):
-    verify(client, "c1")
-    req = request_action(client, "c1")
-    app = console()
-    assert "MFA reset · Priya Raman (E1001)" in texts(app.markdown)
-    app.text_input(key=f"note-{req['approval_id']}").input("Checked her badge photo")
-    app.button(key=f"approve-{req['approval_id']}").click().run()
-    approval = client.get(f"/admin/approvals/{req['approval_id']}").json()
-    assert approval["status"] == "executed" and approval["decision_note"] == "Checked her badge photo"
-    assert f"{req['approval_id']} approved." in texts(app.success)
+def test_only_the_listed_files_are_served(client):
+    assert client.get("/console/index.html").status_code == 404
+    assert client.get("/console/..%2Fconsole.py").status_code == 404
+    assert client.get("/console/%2E%2E%2F%2E%2E%2F.env").status_code == 404
 
 
-def test_reject_from_the_console(console, client):
-    verify(client, "c1")
-    req = request_action(client, "c1", "account_unlock", "locked out")
-    app = console()
-    app.button(key=f"reject-{req['approval_id']}").click().run()
-    assert client.get(f"/admin/approvals/{req['approval_id']}").json()["status"] == "rejected"
+def test_console_is_local_only_without_an_admin_secret(client):
+    assert client.get("/console", headers=TUNNEL).status_code == 403
+    assert client.get("/console/app.js", headers=TUNNEL).status_code == 403
+    assert client.get("/admin/overview", headers=TUNNEL).status_code == 403
 
 
-def test_own_request_cannot_be_approved_by_yourself(console, client):
-    verify(client, "c1", "E1019", "Vikram Rao")
-    req = request_action(client, "c1", "account_unlock", "locked out")
-    app = console()
-    assert app.button(key=f"approve-{req['approval_id']}").disabled
-    app.selectbox(key="technician").set_value("E1021").run()
-    assert not app.button(key=f"approve-{req['approval_id']}").disabled
+def test_with_a_secret_the_page_loads_but_data_needs_the_key(client, monkeypatch):
+    monkeypatch.setattr(settings, "admin_secret", "s3cret-for-tests")
+    assert client.get("/console", headers=TUNNEL).status_code == 200  # the page itself holds no data
+    assert client.get("/admin/overview", headers=TUNNEL).status_code == 401
+    ok = client.get("/admin/overview", headers={**TUNNEL, "X-StormDesk-Admin-Key": "s3cret-for-tests"})
+    assert ok.status_code == 200 and ok.json()["pending_approvals"] == 0
 
 
-def test_declare_and_resolve_a_major_incident(console, client):
-    proposal = storm_proposal(client)
-    app = console()
-    assert app.get("progress")[0].proto.text.startswith("3 of 3 reports")
-    app.button(key=f"approve-{proposal['approval_id']}").click().run()
-    major = client.get(f"/admin/approvals/{proposal['approval_id']}").json()["result"]["major_incident"]
-    app.run()
-    assert f"major incident {major}" in texts(app.markdown)
-    app.text_input(key=f"storm-resolve-note-{major}").input("Gateway restarted")
-    app.button(key=f"storm-resolve-{major}").click().run()
-    assert client.get(f"/admin/incidents/{major}").json()["state"] == "resolved"
-    assert "is fixed" in messages(client, "E1004")[0]["body"]
-
-
-def test_phone_shows_the_latest_code(console, client):
-    identify(client, "c1")
-    call(client, "send_verification_code", conversation_id="c1")
-    app = console()
-    code_tile = next(m for m in app.metric if m.label == "Latest verification code")
-    assert code_tile.value == latest_code(client, "E1001")
-
-
-def test_drill_switch(console, client):
-    app = console()
-    app.toggle(key="chaos-itsm_down").set_value(True).run()
-    assert client.get("/admin/chaos").json()["flags"]["itsm_down"] is True
-    assert "Drill on: Ticket system down" in texts(app.error)
-    app.toggle(key="chaos-itsm_down").set_value(False).run()
-    assert client.get("/admin/chaos").json()["flags"]["itsm_down"] is False
-
-
-def test_demo_outage_and_storm_setup(console, client):
-    app = console()
-    app.selectbox(key="demo_service").set_value("slack")
-    app.button(key="demo_start").click().run()
-    assert client.get("/admin/demo-outages").json()["demo_outages"][0]["service_key"] == "slack"
-    app.button(key="storm_add").click().run()
-    assert client.get("/admin/storm-board").json()["services"][0]["open_reports"] == 2
-
-
-def test_reset_needs_the_checkbox(console):
-    app = console()
-    assert app.button(key="reset").disabled
-    app.checkbox(key="reset_confirm").check().run()
-    assert not app.button(key="reset").disabled
-
-
-def test_reviews_tab_and_follow_up_ticket(console, client, monkeypatch):
-    import asyncio
-
-    from stormdesk.review import reviewers, runner
-    from tests.test_review import CID, stand_in, zoom_call
-
-    monkeypatch.setattr(reviewers, "ask", stand_in())
-    asyncio.run(runner.review(CID, conversation=zoom_call(client), model="test-model"))
-    app = console()
-    assert "1 call review(s) need a look" not in texts(app.warning)  # it's a pass
-    assert next(m for m in app.metric if m.label == "✅ Pass").value == "1"
-    app.session_state["reviews_table"] = {"selection": {"rows": [0], "columns": []}}  # a click on the first row
-    app.run()
-    assert "Handled well." in texts(app.markdown)
-    app.button(key=f"followup-{CID}-0").click().run()
-    items = client.get(f"/admin/reviews/{CID}").json()["report"]["follow_up"]["items"]
-    assert items[0]["ticket"].startswith("INC")
-
-
-def test_says_so_when_the_backend_is_down(monkeypatch):
-    monkeypatch.setattr(console_client, "override", None)
-    monkeypatch.setattr(console_client, "_shared", None)
-    monkeypatch.setattr(settings, "backend_url", "http://127.0.0.1:9")
-    app = AppTest.from_file(APP, default_timeout=30)
-    app.run()
-    assert "Can't reach StormDesk" in texts(app.error)
+def test_script_only_fills_the_page_through_the_escaping_helper():
+    script = (WEB / "app.js").read_text()
+    assignments = re.findall(r"\.innerHTML\s*=\s*([^;]+);", script)
+    assert assignments and all(a.startswith("part(") or a == "markup" for a in assignments), assignments
+    assert "insertAdjacentHTML" not in script and "document.write" not in script
+    assert not re.search(r"\son[a-z]+=", (WEB / "index.html").read_text())  # no inline handlers (CSP blocks them)

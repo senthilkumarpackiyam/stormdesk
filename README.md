@@ -18,7 +18,7 @@ My agent helps **employees** get **an IT problem fixed or correctly routed** ove
 | Account changes without verification *and* technician approval | **0** across ~80 evaluated calls |
 | Call length | Every call under a minute (target: 4 minutes) |
 | Post-call reviews (Kimi-K3 on Nebius) | 14 pass, 1 attention · process score 4.93/5 |
-| Automated tests | 174, all offline |
+| Automated tests | 170, all offline |
 
 The before/after story, including the two real bugs the evaluation found, is in [docs/evals](docs/evals/README.md).
 
@@ -38,7 +38,7 @@ Mermaid source and a component table: [docs/architecture.md](docs/architecture.m
 | Field | StormDesk |
 |---|---|
 | **Agent goal** | Take an employee's IT call and fix it, route it, or hand it to a person, safely |
-| **Where people use it** | A voice call (ElevenLabs talk link; a phone number can be attached). Technicians use a Streamlit console |
+| **Where people use it** | A voice call (ElevenLabs talk link; a phone number can be attached). Technicians use a web console (HTML5, served by the backend at `/console`) |
 | **Steps, in order** | 1. identify (employee ID + full name) → 2. check history → 3. hear the problem → 4. check live status and colleagues' reports → 5. move to the right desk → 6. fix, log, verify + request approval, or report security → 7. read back and confirm every change → 8. recap and end the call → 9. post-call review |
 | **What it can do** | *Read, on its own:* lookup_employee, get_caller_history, check_service_status, find_similar_incidents, search_kb, check_device_health, check_security_advisories, check_verification_code, check_approval_status. *Low-risk writes, caller confirms a read-back:* send_verification_code, create_incident, add_ticket_note. *Sensitive, code verification + technician approval:* request_sensitive_action (MFA reset, unlock, access), and declaring a major incident |
 | **What it remembers** | Per call: a session keyed by the ElevenLabs conversation id (who, verified, locked, last ticket). Across calls: ticket history and previous calls. Pending approvals: LangGraph checkpoints in SQLite (they survive restarts). Every tool call goes to an audit trail |
@@ -57,10 +57,10 @@ cp .env.example .env        # add ELEVENLABS_API_KEY, NGROK_AUTHTOKEN, NEBIUS_AP
 uv run python -m stormdesk.seed --reset      # the fictional practice company, Acme Corp
 
 uv run uvicorn stormdesk.main:app --port 8000       # terminal 1: the backend
-uv run streamlit run stormdesk/console/app.py       # terminal 2: the technician console
-uv run python -m stormdesk.voice up                 # terminal 3: tunnel + deploy; prints the talk link
+open http://localhost:8000/console                  #   ...and the technician console, in the browser
+uv run python -m stormdesk.voice up                 # terminal 2: tunnel + deploy; prints the talk link
 
-uv run pytest -q                                    # 174 offline tests
+uv run pytest -q                                    # 170 offline tests
 uv run python -m stormdesk.voice chat               # talk to the agent by typing (no voice minutes)
 uv run python -m stormdesk.rehearse                 # four scripted calls against the backend, no AI
 ```
@@ -165,7 +165,9 @@ uv run python -m stormdesk.review compare -n 5 --models A B C      # same calls,
 
 ## The console
 
-What the human technician works from. Approvals, the storm board and the phones refresh themselves every few seconds, so a request made on a live call appears while the caller is still on the line.
+What the human technician works from: one HTML5 page at **http://localhost:8000/console**, served by the backend itself (plain HTML, CSS and JavaScript in [stormdesk/web/](stormdesk/web/), no build step and nothing extra to install). Approvals, the storm board and the phones refresh themselves every few seconds, so a request made on a live call appears while the caller is still on the line. What you type is kept across refreshes, and a toast pops up when a new approval arrives.
+
+The page holds no data of its own. Its script reads everything from the `/admin` endpoints, escapes every value before showing it, and runs under a strict Content-Security-Policy (no inline scripts, no third-party scripts). With `STORMDESK_ADMIN_SECRET` set, it asks for that key once and keeps it in the browser tab only.
 
 | Tab | What it's for |
 |---|---|
@@ -184,7 +186,7 @@ What the human technician works from. Approvals, the storm board and the phones 
 | Endpoints | Used by | Protected by |
 |---|---|---|
 | `/tools/*` | The voice agent, through the ngrok tunnel | `X-StormDesk-Key` = `STORMDESK_TOOL_SECRET`, created by `voice up` and stored in ElevenLabs as a workspace secret |
-| `/admin/*`, `/status/overview` | The console and technicians | **Local-only** by default: anything carrying tunnel/proxy headers is refused. To use remotely, set `STORMDESK_ADMIN_SECRET` and send `X-StormDesk-Admin-Key` |
+| `/console`, `/admin/*`, `/status/overview` | The console and technicians | **Local-only** by default: anything carrying tunnel/proxy headers is refused. To use remotely, set `STORMDESK_ADMIN_SECRET` and send `X-StormDesk-Admin-Key` (the console page then loads anywhere but asks for the key before it shows anything) |
 | `/health` | Uptime checks | Public; reveals nothing |
 
 The voice agent's key can never open technician endpoints, so a compromised or misled agent can't approve its own requests.
@@ -236,7 +238,7 @@ All tools are `POST /tools/<name>` with a JSON body. They always answer `200` wi
 | `request_sensitive_action` | `mfa_reset`, `account_unlock`, `access_grant`. Needs code verification, then starts the LangGraph approval graph, which pauses until an IT technician (not the requester) decides |
 | *(automatic)* major incident | Proposed when 3+ reports for one service arrive within 30 min; declared only on approval |
 
-**For the technician** (the phase 3 console): `/admin/approvals`, `/admin/approvals/{id}/decision`, `/admin/incidents`, `/admin/messages` (simulated phones), `/admin/chaos` (failure drills), `/admin/outbox`, `/admin/audit`.
+**For the technician** (what the console calls): `/admin/approvals`, `/admin/approvals/{id}/decision`, `/admin/incidents`, `/admin/messages` (simulated phones), `/admin/chaos` (failure drills), `/admin/outbox`, `/admin/audit`.
 
 ## How the approval graph works
 
@@ -287,13 +289,15 @@ stormdesk/
   admin.py             technician and drill endpoints (local-only unless an admin secret is set)
   resolve.py           technician closes a ticket; closing a major closes its reports and texts everyone
   staff.py             who counts as a technician
-  console/app.py       Streamlit console; console/client.py talks to the admin endpoints over HTTP
+  console.py           serves the technician console (local-only unless an admin secret is set)
+  web/                 the console itself: index.html, app.css, app.js, logo.svg (HTML5, no build step)
   voice/               ElevenLabs: prompts, workflow (agent_spec), tools generated from the backend
                        (tools_spec), deploy, ngrok tunnel, text client (chat), scripted callers (scenarios)
   review/              post-call reviews: casefile, rules (no AI), reviewers (Nebius), graph (LangGraph),
                        runner (auto-pickup), followups, store
 elevenlabs/            exported agent + tool definitions (placeholders instead of URL and secret)
-tests/                 174 tests, no network needed (test_console.py drives the real console with AppTest;
-                       test_voice.py deploys against a fake ElevenLabs; test_review.py uses stand-in reviewers)
+tests/                 170 tests, no network needed (test_console.py checks the console is served, guarded and
+                       escapes server data; test_voice.py deploys against a fake ElevenLabs; test_review.py uses
+                       stand-in reviewers)
 docs/                  phase plan, prompt log, iteration log, screenshots
 ```
