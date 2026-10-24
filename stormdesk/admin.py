@@ -275,5 +275,4 @@ class ResetIn(BaseModel):
 async def reset_practice_data(body: ResetIn):
     if not body.confirm:
         raise HTTPException(400, "Send {\"confirm\": true} to wipe and reload the practice company.")
-    seed(reset=True)
-    return {"ok": True}
+    return {"ok": True, "backup": seed(reset=True)}

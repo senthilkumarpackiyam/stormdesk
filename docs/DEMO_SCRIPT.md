@@ -9,7 +9,7 @@ The course asks for: what you built, how you used AI coding tools, and the final
    uv run uvicorn stormdesk.main:app --port 8000      # 1. backend; the console is at http://localhost:8000/console
    uv run python -m stormdesk.voice up                # 2. tunnel + deploy: copy the "talk" link it prints
    ```
-2. **Reset the practice data:** console → 🧪 Drills → tick the box → *Reset practice data*.
+2. **Reset the practice data:** console → 🧪 Drills → tick the box → *Reset practice data*. A backup of the old data is saved first (`uv run python -m stormdesk.seed --restore` brings it back).
 3. **Prepare the ticket storm:** 🧪 Drills → *Set up a ticket storm*: service **VPN**, office **Chennai**, reports **2** → *Add reports*. Your call will be the third.
 4. **Open these tabs in Chrome:**
    - the **talk link**, with the microphone allowed (use Chrome: in Safari the talk page can't reach the microphone)

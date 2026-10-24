@@ -146,3 +146,17 @@ Asked three questions, the answers were: names → **"Senthil as the technician"
 
 **Outcome:** three live voice calls (Sarah's lost phone, an impostor posing as Daniel, Karthik's VPN storm) all worked and were graded pass by the reviewers. Karthik's call showed the agent asking a single-name caller for a surname twice. The fix is an explicit rule with an example. The scripted Karthik caller now answers the ID question the way a person would, and a new check fails if a surname is asked for. Re-run against the live agent: Karthik passed twice, and lost phone, impostor and wrong-ID passed as regressions. Fresh screenshots were taken from scripted calls with real reviews, then everything was published and the doc refreshed.
 
+### Prompt 21: automatic backups (2026-10-24)
+
+> yes i press reset and yes i need automatic backup
+
+*(This answered two questions: had the test-call records been wiped by the console's Reset button, and should resets keep a backup?)*
+
+**Outcome:** every reset (console, `seed --reset`, rehearsal) now first saves the old data and the saved approvals to `data/backups/`, using SQLite's own backup, so it's safe while the server runs. The newest 10 are kept. `seed --backups` lists them and `seed --restore [NAME]` puts one back, saving the data it replaces first. The console's reset notice names the backup. 5 new tests, plus a reset → restore round trip on a copy of the real data.
+
+### Prompt 22: a guide for evaluators (2026-10-24)
+
+> I want to ship the entire coding and the demo guide to evalutor to try run and explore the project. How do we do it?
+
+**Outcome:** `docs/EVALUATOR_GUIDE.md`, with three levels: install and test; console plus four scripted calls, needing no accounts or keys; live voice with the evaluator's own ElevenLabs and ngrok accounts. It also covers what to look for against each course requirement and fixes for common problems. Every no-keys step was checked first on a fresh copy with no `.env` and no data: install, 175 tests, backend, the rehearsal's four calls, and every console tab in Chrome. The guide is linked from the README and the write-up.
+

@@ -6,6 +6,8 @@ Built for The Gen Academy, Week 3 "Build Your AI Agent": use case F (multi-agent
 
 > **Demo video:** _link to be added_ · **Project write-up:** [docs/SUBMISSION.md](docs/SUBMISSION.md)
 
+> **Evaluators: [try it yourself](docs/EVALUATOR_GUIDE.md).** Install, run the tests and explore the console with four scripted calls in about 15 minutes, with no accounts or API keys. Talking to it takes free ElevenLabs and ngrok accounts.
+
 ## The one-liner
 
 My agent helps **employees** get **an IT problem fixed or correctly routed** over **a voice call**. It replaces **the hold queue, the first-line technician, and the duplicate tickets that flood the desk during every outage**. It identifies the caller, checks live vendor status and colleagues' reports, troubleshoots from the knowledge base, and logs or links tickets on its own, using **13 tools across six specialist desks**. It hands off to a human **for any account change (after text-code verification), a likely major incident, a security report, or a caller who asks for a person**. I'll know it works when **a caller reaches a fix or a correctly routed ticket in under 4 minutes, with zero account changes made without verification and a technician's approval**.
@@ -18,7 +20,7 @@ My agent helps **employees** get **an IT problem fixed or correctly routed** ove
 | Account changes without verification *and* technician approval | **0** across ~80 evaluated calls |
 | Call length | Every call under a minute (target: 4 minutes) |
 | Post-call reviews (Kimi-K3 on Nebius) | 14 pass, 1 attention · process score 4.93/5 |
-| Automated tests | 170, all offline |
+| Automated tests | 175, all offline |
 
 The before/after story, including the two real bugs the evaluation found, is in [docs/evals](docs/evals/README.md).
 
@@ -60,7 +62,7 @@ uv run uvicorn stormdesk.main:app --port 8000       # terminal 1: the backend
 open http://localhost:8000/console                  #   ...and the technician console, in the browser
 uv run python -m stormdesk.voice up                 # terminal 2: tunnel + deploy; prints the talk link
 
-uv run pytest -q                                    # 170 offline tests
+uv run pytest -q                                    # 175 offline tests
 uv run python -m stormdesk.voice chat               # talk to the agent by typing (no voice minutes)
 uv run python -m stormdesk.rehearse                 # four scripted calls against the backend, no AI
 ```
@@ -69,6 +71,7 @@ uv run python -m stormdesk.rehearse                 # four scripted calls agains
 
 | Document | What's in it |
 |---|---|
+| [docs/EVALUATOR_GUIDE.md](docs/EVALUATOR_GUIDE.md) | Try it yourself: three levels, from no keys to live voice calls |
 | [docs/PHASES.md](docs/PHASES.md) | The build, phase by phase, explained in plain English |
 | [docs/architecture.md](docs/architecture.md) | Diagram and components |
 | [docs/evals/README.md](docs/evals/README.md) | Evaluation runs: before, after, final, release |
@@ -181,6 +184,13 @@ The page holds no data of its own. Its script reads everything from the `/admin`
 
 ![Approvals](docs/screenshots/console-approvals.png)
 
+**Backups.** Every reset (the Drills tab, `seed --reset`, the rehearsal) first saves a copy of the old data to `data/backups/`, and the newest 10 are kept. To get one back, stop the backend and run:
+
+```bash
+uv run python -m stormdesk.seed --backups            # list them, newest first
+uv run python -m stormdesk.seed --restore            # the newest; or --restore 20261024-202410
+```
+
 ## Security boundary
 
 | Endpoints | Used by | Protected by |
@@ -287,6 +297,7 @@ stormdesk/
   rehearse.py          four scripted calls, in text
   seed.py              the fictional practice company
   admin.py             technician and drill endpoints (local-only unless an admin secret is set)
+  store/backups.py     a copy of the data before every reset; list and restore
   resolve.py           technician closes a ticket; closing a major closes its reports and texts everyone
   staff.py             who counts as a technician
   console.py           serves the technician console (local-only unless an admin secret is set)
@@ -296,7 +307,7 @@ stormdesk/
   review/              post-call reviews: casefile, rules (no AI), reviewers (Nebius), graph (LangGraph),
                        runner (auto-pickup), followups, store
 elevenlabs/            exported agent + tool definitions (placeholders instead of URL and secret)
-tests/                 170 tests, no network needed (test_console.py checks the console is served, guarded and
+tests/                 175 tests, no network needed (test_console.py checks the console is served, guarded and
                        escapes server data; test_voice.py deploys against a fake ElevenLabs; test_review.py uses
                        stand-in reviewers)
 docs/                  phase plan, prompt log, iteration log, screenshots

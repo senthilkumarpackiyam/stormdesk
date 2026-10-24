@@ -713,6 +713,7 @@
           <button class="btn primary" type="button" data-action="storm-add">${icon("plus")}Add reports</button>` })}
         ${card({ title: "Start over", ic: "trash", tone: "bad", body: html`
           <label class="check"><input type="checkbox" data-draft="reset_confirm">I understand this wipes every ticket, call, approval and review</label>
+          <p class="meta">A backup of the current data is saved first. To bring it back: stop the backend, then run <code>uv run python -m stormdesk.seed --restore</code></p>
           <button class="btn danger" type="button" id="reset-btn" data-action="reset"${drafts.reset_confirm ? "" : trusted(" disabled")}>${icon("trash")}Reset practice data</button>` })}
       </div></div>`);
   }
@@ -763,13 +764,14 @@
 
   async function resetData() {
     if (!drafts.reset_confirm) return;
-    await api("/admin/reset", { method: "POST", body: { confirm: true } });
+    const result = await api("/admin/reset", { method: "POST", body: { confirm: true } });
     drafts.reset_confirm = false;
     state.selected = { tickets: null, calls: null, reviews: null };
     state.status = null;
     state.seenPending = 0;
     await loadEmployees();
-    toast("Practice data reset.", "ok");
+    toast(result.backup ? `Practice data reset. The old data was backed up first (${result.backup}).`
+      : "Practice data reset.", "ok");
   }
 
   // --- tabs and refreshing ------------------------------------------------------------------------

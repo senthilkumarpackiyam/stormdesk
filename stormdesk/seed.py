@@ -2,7 +2,9 @@
 
 Everything here is fictional (555 phone numbers, .example email domain).
 
-    uv run python -m stormdesk.seed --reset                  # wipe and reload
+    uv run python -m stormdesk.seed --reset                  # wipe and reload (a backup is saved first)
+    uv run python -m stormdesk.seed --backups                # list the backups, newest first
+    uv run python -m stormdesk.seed --restore [NAME]         # put a backup back (the newest if no NAME)
     uv run python -m stormdesk.seed --storm vpn --location Chennai --count 2
                                                              # add fresh reports to set up a ticket storm
 """
@@ -13,6 +15,7 @@ import json
 from stormdesk import timeutil
 from stormdesk.approvals.graph import clear_checkpoints
 from stormdesk.itsm.local import insert_incident
+from stormdesk.store import backups
 from stormdesk.store.db import connect, init_db
 
 # id, full name, department, title, location, manager, vip, status, laptop model, os product, os release, os label
@@ -196,9 +199,12 @@ def _email(name: str) -> str:
     return name.lower().replace("'", "").replace(" ", ".") + "@acme.example"
 
 
-def seed(reset: bool = False) -> None:
+def seed(reset: bool = False) -> str | None:
+    """Load the practice company. With reset, the old data is backed up first; returns that backup's name."""
     init_db()
+    saved = None
     if reset:
+        saved = backups.save()
         clear_checkpoints()
     with connect() as conn:
         if reset:
@@ -224,6 +230,7 @@ def seed(reset: bool = False) -> None:
             insert_incident(conn, employee_id=eid, short_description=desc, category=category, service=service,
                             location=locations[eid], priority=priority, state=state,
                             created_at=timeutil.ago_iso(days=days))
+    return saved
 
 
 def seed_if_empty() -> None:
@@ -261,10 +268,26 @@ def main() -> None:
     parser.add_argument("--storm", metavar="SERVICE", help="add fresh reports for SERVICE (e.g. vpn)")
     parser.add_argument("--location", default="Chennai")
     parser.add_argument("--count", type=int, default=2)
+    parser.add_argument("--backups", action="store_true", help="list the saved backups, newest first")
+    parser.add_argument("--restore", nargs="?", const="latest", metavar="NAME",
+                        help="put a backup back in place (the newest if no NAME); stop the backend first")
     args = parser.parse_args()
+    if args.backups:
+        found = backups.names()
+        print("\n".join(found) if found else "No backups yet. One is saved automatically before every reset.")
+        return
+    if args.restore:
+        try:
+            restored, safety = backups.restore(args.restore)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        print(f"Restored backup {restored}." + (f" The data it replaced was saved as {safety}." if safety else ""))
+        print("Start (or restart) the backend to use it.")
+        return
     if args.reset:
-        seed(reset=True)
-        print(f"Reloaded {len(EMPLOYEES)} employees, {len(KB_ARTICLES)} KB articles, {len(PAST_INCIDENTS)} incidents.")
+        saved = seed(reset=True)
+        print((f"Saved a backup as {saved}. " if saved else "")
+              + f"Reloaded {len(EMPLOYEES)} employees, {len(KB_ARTICLES)} KB articles, {len(PAST_INCIDENTS)} incidents.")
     else:
         seed_if_empty()
     if args.storm:

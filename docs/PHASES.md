@@ -191,3 +191,5 @@ Each phase is finished, tested, and explained before the next one starts.
 - **Safe by design:** anything that comes from the server is "escaped" before it's shown, so a ticket containing web code is displayed as text and can't run. The page only runs its own script. It's still local-only unless an admin password is set, and then it asks for that password before showing anything.
 - **New names:** Senthil Kumar is the IT technician, Sarah Jeesen is the employee who lost her phone, and Karthik reports the VPN outage.
 - **Checked** in a real Chrome browser: every tab, approving a request, typing during a refresh, the password prompt, and phone-sized screens. 169 automatic tests pass.
+- **A safety net:** pressing Reset now saves a copy of the old data first, and the newest 10 copies are kept. One command brings a copy back.
+

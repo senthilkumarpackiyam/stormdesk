@@ -6,6 +6,8 @@ Use case F (multi-agent IT support voice agent) · Code track (LangGraph + LangC
 
 **GitHub:** [github.com/senthilkumarpackiyam/stormdesk](https://github.com/senthilkumarpackiyam/stormdesk) · **Demo video:** _link_
 
+**Try it yourself:** the [evaluator guide](https://github.com/senthilkumarpackiyam/stormdesk/blob/main/docs/EVALUATOR_GUIDE.md) gets it running in about 15 minutes with no accounts or keys: the tests, the technician console and four scripted calls. Live voice calls need free ElevenLabs and ngrok accounts.
+
 ---
 
 ## 1. Project overview
@@ -88,6 +90,8 @@ The whole project was built with **Claude Code** (Opus 5.5) in VS Code. I set th
 17. *(With a screenshot of a Verint screen as the style example)* "hold on, I dont like the way streamlit shows the application. It is very dull and outdated application and not attractive at all. Could you check if the below changes are possible now to od? -- Change the employee names to Senthil Kumar, Sarah Jeesen, and Karthik -- I want a modernized , futuristic icon for the company name "StormDesk". The icon should represent the business function. Use the official and shuttle colors. -- Use the headers something like attached picture highlighted background blue format with white letters. -- Over all application should be futuristic and attractive. -- Use the official colors -- check if this can be a html5 application rather than streamlit one" *(asked to choose, I picked: Senthil as the technician; blue with Shuttle Gray; replace Streamlit completely)*
 18. *(With a screenshot of the new console)* "few problems that needs to be solved for sure: -- it is still showing old employees in the list -- I dont like the storm desk font. make it modern and futuristic -- I dont like the icon, alter it, no hexagon but use headset with storm, use different color than blue -- I see all the fonts and sizes are very smal, make it liitle bigger in fotn size to see -- remaining all are good"
 19. "guide me step by step…" test, continued: three live voice calls (lost phone, impostor, VPN storm), all graded pass; then "shutdown" and "do all four" (fix what the test found, fresh screenshots, publish, refresh this doc)
+20. "yes i press reset and yes i need automatic backup"
+21. "I want to ship the entire coding and the demo guide to evalutor to try run and explore the project. How do we do it?"
 
 **What worked about this way of prompting:** one clear brief, then *phase gates*. Each phase ended with a plain-English explanation, test results and what I needed to prepare next, so I always understood what had been built before approving more. I gave least-privilege keys (for example, an ElevenLabs key restricted to ElevenAgents) and kept them out of the chat by putting them in `.env`.
 
